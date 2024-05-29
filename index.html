@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timed Google Form</title>
+  <style>
+    iframe {
+      width: 100%;
+      height: 80vh;
+      border: none;
+    }
+    #timer {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+  </style>
+  <script>
+    let timer;
+    let countdownTime = 2 * 60; // 2 minutes in seconds
+    let timerStarted = false;
+
+    function startTimer() {
+      if (!timerStarted) {
+        const timerElement = document.getElementById('timer');
+        timer = setInterval(() => {
+          if (countdownTime <= 0) {
+            clearInterval(timer);
+            alert('Time is up! Submitting the form.');
+            document.getElementById('googleForm').contentWindow.document.forms[0].submit(); // Simulate form submission
+          } else {
+            countdownTime--;
+            const minutes = Math.floor(countdownTime / 60);
+            const seconds = countdownTime % 60;
+            timerElement.textContent = `Time left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+          }
+        }, 1000);
+        timerStarted = true;
+      }
+    }
+
+    function monitorForm() {
+      const iframe = document.getElementById('googleForm');
+      iframe.onload = () => {
+        const formDocument = iframe.contentWindow.document;
+        formDocument.addEventListener('click', startTimer, { once: true });
+      };
+    }
+
+    window.onload = monitorForm;
+  </script>
+</head>
+<body>
+  <h1>Google Form with Timer</h1>
+  <div id="timer">Time left: 2:00</div>
+  <iframe id="googleForm" src="https://forms.gle/KMinnLDWEhLLDGis8"></iframe>
+</body>
+</html>
